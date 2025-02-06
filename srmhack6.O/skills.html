@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Mock Interview App</title>
+    <link rel="stylesheet" href="styleskils.css">
+</head>
+<body>
+    <video id="background-video" autoplay loop muted>
+        <source src="" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+
+    <header>
+        <nav>
+            <div class="logo">AI Mock Interview</div>
+        </nav>
+    </header>
+
+    <main>
+        <section id="skill-section">
+            <h2>Select a Skill to Start the Mock Interview</h2>
+            <div class="skill-buttons">
+                <button data-skill="webDevelopment">Web Development</button>
+                <button data-skill="dataScience">Data Science</button>
+                <button data-skill="cybersecurity">Cybersecurity</button>
+                <button data-skill="ml">Machine Learning</button>
+                <button data-skill="cloudComputing">Cloud Computing</button>
+            </div>
+        </section>
+
+        <section id="interview" hidden>
+            <h2>Mock Interview in Progress</h2>
+            <div class="interview-container">
+                <video id="userFeed" autoplay></video>
+                <div id="questionDisplay"></div>
+                <div id="timer"></div>
+                <button id="stopInterview">Stop Interview</button>
+            </div>
+        </section>
+
+        <section id="feedback-section" hidden>
+            <h2>Feedback</h2>
+            <div id="feedback"></div>
+        </section>
+
+        <section id="recording-section" hidden>
+            <h2>Interview Recording</h2>
+            <video id="recordedVideo" controls></video>
+            <a id="downloadRecording" download="mock_interview.mp4">Download Recording</a>
+        </section>
+    </main>
+
+    <script>
+        let cameraStream;
+        let countdownInterval;
+        let mediaRecorder;
+        let recordedChunks = [];
+
+        const questionBank = {
+            webDevelopment: [
+                "What is the difference between HTML and HTML5?",
+                "Explain the concept of Flexbox in CSS.",
+                "What is a REST API?",
+                "How does JavaScript handle asynchronous operations?"
+            ],
+            dataScience: [
+                "What is the difference between supervised and unsupervised learning?",
+                "Explain the purpose of a confusion matrix.",
+                "What is data normalization, and why is it important?",
+                "How do you handle missing data in datasets?"
+            ],
+            cybersecurity: [
+                "What is a DDoS attack?",
+                "Explain the concept of encryption.",
+                "How do you secure sensitive information on a website?",
+                "What is the role of a firewall in cybersecurity?"
+            ],
+            ml: [
+                "What is a neural network?",
+                "Explain the concept of overfitting.",
+                "What are hyperparameters in machine learning?",
+                "How does backpropagation work in neural networks?"
+            ],
+            cloudComputing: [
+                "What is serverless computing?",
+                "Explain the benefits of cloud storage.",
+                "What are the different types of cloud service models?",
+                "How does cloud scaling work?"
+            ]
+        };
+
+        document.querySelectorAll('.skill-buttons button').forEach(button => {
+            button.addEventListener('click', () => {
+                const skill = button.dataset.skill;
+                startInterview(skill);
+            });
+        });
+
+        async function startInterview(skill) {
+            document.getElementById("interview").hidden = false;
+            document.getElementById("skill-section").hidden = true;
+            await startCamera();
+            askQuestion(skill);
+            startTimer(50);
+        }
+
+        async function startCamera() {
+            try {
+                cameraStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+                document.getElementById("userFeed").srcObject = cameraStream;
+
+                startRecording();
+            } catch (err) {
+                alert("Error accessing camera: " + err.message);
+            }
+        }
+
+        function startRecording() {
+            recordedChunks = [];
+            mediaRecorder = new MediaRecorder(cameraStream);
+            mediaRecorder.ondataavailable = event => {
+                if (event.data.size > 0) recordedChunks.push(event.data);
+            };
+            mediaRecorder.start();
+        }
+
+        function askQuestion(skill) {
+            const questions = questionBank[skill];
+            const randomQuestion = questions[Math.floor(Math.random() * questions.length)];
+            document.getElementById("questionDisplay").textContent = randomQuestion;
+            speakQuestion(randomQuestion);
+        }
+
+        function speakQuestion(question) {
+            const synth = window.speechSynthesis;
+            const utterance = new SpeechSynthesisUtterance(question);
+            synth.speak(utterance);
+        }
+
+        function startTimer(duration) {
+            let timer = duration;
+            const timerDisplay = document.getElementById("timer");
+
+            countdownInterval = setInterval(() => {
+                timerDisplay.textContent = `Time Remaining: ${timer}s`;
+                if (--timer < 0) {
+                    clearInterval(countdownInterval);
+                    stopInterview();
+                }
+            }, 1000);
+        }
+
+        document.getElementById("stopInterview").addEventListener("click", stopInterview);
+
+        function stopInterview() {
+            clearInterval(countdownInterval);
+            if (cameraStream) {
+                cameraStream.getTracks().forEach(track => track.stop());
+            }
+            mediaRecorder.stop();
+            document.getElementById("interview").hidden = true;
+            showFeedback();
+
+            mediaRecorder.onstop = () => {
+                const recordedBlob = new Blob(recordedChunks, { type: "video/mp4" });
+                const videoURL = URL.createObjectURL(recordedBlob);
+                document.getElementById("recording-section").hidden = false;
+                const recordedVideo = document.getElementById("recordedVideo");
+                recordedVideo.src = videoURL;
+
+                const downloadLink = document.getElementById("downloadRecording");
+                downloadLink.href = videoURL;
+            };
+        }
+
+        function showFeedback() {
+            document.getElementById("feedback-section").hidden = false;
+            document.getElementById("feedback").textContent = "Great job on completing the interview! Keep practicing to improve your confidence and clarity.";
+        }
+    </script>
+</body>
+</html>
+

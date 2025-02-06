@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Connect - Login</title>
+    <style>
+        /* Basic Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #0A192F; /* Deep blue-black background */
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            flex-direction: column;
+        }
+
+        header {
+            background-color: #1E88E5; /* Vibrant blue */
+            width: 100%;
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        header h1 {
+            color: white;
+            font-size: 36px;
+            margin: 0;
+        }
+
+        .login-form {
+            width: 100%;
+            max-width: 500px;
+            background-color: #1C2738; /* Darker shade */
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0px 10px 25px rgba(0, 0, 0, 0.5);
+            margin-top: 20px;
+        }
+
+        .login-form h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 28px;
+            color: #1E88E5;
+        }
+
+        .login-form label {
+            display: block;
+            margin-bottom: 8px;
+            color: white;
+            font-size: 16px;
+        }
+
+        .login-form input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #1E88E5;
+            border-radius: 8px;
+            background-color: #2E3C4E;
+            color: white;
+            font-size: 16px;
+        }
+
+        .login-form button {
+            width: 100%;
+            padding: 12px;
+            background-color: #1E88E5;
+            border: none;
+            color: white;
+            font-size: 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .login-form button:hover {
+            background-color: #1976D2;
+        }
+
+        .login-form p {
+            text-align: center;
+            margin-top: 20px;
+            color: white;
+        }
+
+        .login-form a {
+            color: #1E88E5;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .login-form a:hover {
+            text-decoration: underline;
+        }
+
+        footer {
+            background-color: #1E88E5;
+            padding: 10px 0;
+            text-align: center;
+            color: white;
+            font-size: 14px;
+            width: 100%;
+            position: fixed;
+            bottom: 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <h1>Mock Shawk</h1>
+        </div>
+    </header>
+
+    <!-- Login Form -->
+    <section class="login-form">
+        <div class="container">
+            <h2>Login</h2>
+            <form id="loginForm" action="#" method="POST">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" placeholder="Enter your email" required>
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                <button type="submit" class="btn">Login</button>
+            </form>
+            <p>Don't have an account? <a href="signup.html">Sign up here</a>.</p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 MockShawk. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function (e) {
+            e.preventDefault(); // Prevent page refresh
+
+            const username = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            // Hardcoded login authentication
+            const users = {
+                "pabhineet7@gmail.com": "pathak",
+                "kunalbh4397@gmail.com": "bhardwaj",
+                "raman@gmail.com": "pall",
+                "kavya@gmail.com": "agrawal",
+                "ayansh@gmail.com": "singhaniya"
+            };
+
+            if (users[username] && users[username] === password) {
+                window.location.href = "index.html"; // Redirect to home page
+            } else {
+                alert("Invalid username or password.");
+            }
+        });
+    </script>
+</body>
+</html>
